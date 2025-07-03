@@ -1,7 +1,35 @@
+version: '3.8'
+
 services:
+  server:
+    build:
+      context: ./stats/server
+    container_name: java-explore-with-me_server
+    ports:
+      - "9090:9090"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/explorewithme
+      - SPRING_DATASOURCE_USERNAME=dbuser
+      - SPRING_DATASOURCE_PASSWORD=12345
+
+  # Сервис gateway
+  gateway:
+    build:
+      context: ./stats/gateway
+    container_name: java-explore-with-me_gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - server
+    environment:
+      - STATS_SERVER_URL=http://server:9090
+
   db:
     image: postgres:16.1
-    container_name: explorewithme
+    container_name: java-explore-with-me_postgres
     ports:
       - "5432:5432"
     environment:
