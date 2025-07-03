@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  server:
+  stats-server:
     build:
       context: ./stats/server
     container_name: java-explore-with-me_server
@@ -15,7 +15,6 @@ services:
       - SPRING_DATASOURCE_USERNAME=dbuser
       - SPRING_DATASOURCE_PASSWORD=12345
 
-  # Сервис gateway
   gateway:
     build:
       context: ./stats/gateway
@@ -23,9 +22,9 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - server
+      - stats-server
     environment:
-      - STATS_SERVER_URL=http://server:9090
+      - STATS_SERVER_URL=http://stats-server:9090
 
   db:
     image: postgres:16.1
