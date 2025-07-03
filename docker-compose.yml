@@ -14,6 +14,7 @@ services:
       interval: 5s
       retries: 10
 
+
   stats-server:
     build:
       context: stats/server
