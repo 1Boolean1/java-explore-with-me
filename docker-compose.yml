@@ -1,9 +1,10 @@
-version: '3.8'
-
 services:
-  stats-server:
+  ewm-service:
     build:
-      context: ./stats/server
+      context: .
+      dockerfile: server/Dockerfile
+      args:
+        JAR_FILE: server/target/*.jar
     container_name: java-explore-with-me_server
     ports:
       - "9090:9090"
@@ -17,14 +18,17 @@ services:
 
   gateway:
     build:
-      context: ./stats/gateway
+      context: .
+      dockerfile: gateway/Dockerfile
+      args:
+        JAR_FILE: gateway/target/*.jar
     container_name: java-explore-with-me_gateway
     ports:
       - "8080:8080"
     depends_on:
-      - stats-server
+      - ewm-service
     environment:
-      - STATS_SERVER_URL=http://stats-server:9090
+      - STATS_SERVER_URL=http://ewm-service:9090
 
   db:
     image: postgres:16.1
