@@ -43,7 +43,7 @@ public class StatsClient extends BaseClient {
         return get("/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
     }
 
-    public ResponseEntity<Object> saveStats(String app, String uris, String ip) {
+    public void saveStats(String app, String uris, String ip) {
         HitDto hitDto = HitDto.builder()
                 .app(app)
                 .uri(uris)
@@ -51,6 +51,6 @@ public class StatsClient extends BaseClient {
                 .time(LocalDateTime.now())
                 .build();
         log.info("Sending POST request to stats(gateway)");
-        return post("/hit", hitDto);
+        post("/hit", hitDto);
     }
 }
