@@ -3,7 +3,10 @@ version: '3.8'
 services:
   stats-server:
     build:
-      context: ./stats/server
+      context: .
+      dockerfile: server/Dockerfile
+      args:
+        JAR_FILE: server/target/*.jar
     container_name: java-explore-with-me_server
     ports:
       - "9090:9090"
@@ -17,7 +20,10 @@ services:
 
   gateway:
     build:
-      context: ./stats/gateway
+      context: .
+      dockerfile: gateway/Dockerfile
+      args:
+        JAR_FILE: gateway/target/*.jar
     container_name: java-explore-with-me_gateway
     ports:
       - "8080:8080"
