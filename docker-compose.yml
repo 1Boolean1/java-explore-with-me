@@ -17,7 +17,7 @@ services:
 
   stats-server:
     build:
-      context: stats/server
+      context: ./stats/server
       dockerfile: Dockerfile
     depends_on:
       - db
@@ -28,10 +28,16 @@ services:
       - SPRING_DATASOURCE_USERNAME=dbuser
       - SPRING_DATASOURCE_PASSWORD=12345
       - SERVER_ADDRESS=0.0.0.0
-    healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "9090"]
-      interval: 20s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
     command: sh -c "sleep 10 && java -jar app.jar"
+
+  ewm-service:
+    restart: on-failure
+    build: ./main
+    image: ewm-main-service
+    container_name: "ewm-main-service"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - stats-server
+    environment:
+      - STATS_SERVER_URL=http://stats-server:9090
