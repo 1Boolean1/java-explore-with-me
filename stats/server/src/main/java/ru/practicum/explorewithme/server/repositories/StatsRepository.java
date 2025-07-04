@@ -27,12 +27,12 @@ public interface StatsRepository extends JpaRepository<Hit, Integer> {
             "WHERE h.time BETWEEN ?1 AND ?2 AND h.uri = ?3 " +
             "GROUP BY h.app, h.uri " +
             "ORDER BY COUNT(DISTINCT h.ip) DESC")
-    List<GetHitDto> findUniqByTimestampAndUris(LocalDateTime from, LocalDateTime to, String uri);
+    List<GetHitDto> findUniqByTimestampAndUris(LocalDateTime from, LocalDateTime to, List<String> uri);
 
     @Query("SELECT new ru.practicum.explorewithme.dto.dtos.GetHitDto(h.app, h.uri, COUNT(h.ip)) FROM Hit h " +
             "WHERE h.time BETWEEN ?1 AND ?2 AND h.uri = ?3 " +
             "GROUP BY h.app, h.uri " +
             "ORDER BY COUNT(h.ip) DESC")
-    List<GetHitDto> findByTimestampAndUris(LocalDateTime from, LocalDateTime to, String uri);
+    List<GetHitDto> findByTimestampAndUris(LocalDateTime from, LocalDateTime to, List<String> uri);
 
 }

@@ -30,7 +30,13 @@ public class StatsService implements Service {
                 return repository.findByTimestamp(start, end);
             }
         } else {
-            return findHitsWithUris(start, end, uris, unique);
+            if (unique) {
+                log.info("Getting uniq stats from %s to %s(server) by uris", start, end);
+                return repository.findUniqByTimestampAndUris(start, end, uris);
+            } else {
+                log.info("Getting non-uniq stats from %s to %s(server) by uris", start, end);
+                return repository.findByTimestampAndUris(start, end, uris);
+            }
         }
     }
 
@@ -38,22 +44,6 @@ public class StatsService implements Service {
     public void saveHit(HitDto hitDto) {
         hitDto.setTime(LocalDateTime.now());
         repository.save(HitMapper.mapToHit(hitDto));
-    }
-
-    private List<GetHitDto> findHitsWithUris(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
-        List<GetHitDto> hits = new ArrayList<>();
-        if (unique) {
-            log.info("Getting uniq stats from %s to %s(server) by uris", start, end);
-            for (String uri : uris) {
-                hits.addAll(repository.findUniqByTimestampAndUris(start, end, uri));
-            }
-        } else {
-            log.info("Getting non-uniq stats from %s to %s(server) by uris", start, end);
-            for (String uri : uris) {
-                hits.addAll(repository.findByTimestampAndUris(start, end, uri));
-            }
-        }
-        return hits;
     }
 }
 
