@@ -27,3 +27,8 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/explorewithme
       - SPRING_DATASOURCE_USERNAME=dbuser
       - SPRING_DATASOURCE_PASSWORD=12345
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "9090"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
