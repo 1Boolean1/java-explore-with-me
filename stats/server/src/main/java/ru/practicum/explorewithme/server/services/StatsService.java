@@ -21,7 +21,7 @@ public class StatsService implements Service {
 
     @Override
     public List<GetHitDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
-        if (uris.isEmpty()) {
+        if (uris == null) {
             if (unique) {
                 log.info("Getting uniq stats from %s to %s(server)", start, end);
                 return repository.findUniqByTimestamp(start, end);
