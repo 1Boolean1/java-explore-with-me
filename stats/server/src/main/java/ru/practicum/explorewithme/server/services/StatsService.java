@@ -7,7 +7,6 @@ import ru.practicum.explorewithme.server.mappers.HitMapper;
 import ru.practicum.explorewithme.server.repositories.StatsRepository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @org.springframework.stereotype.Service
