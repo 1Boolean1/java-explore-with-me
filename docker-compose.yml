@@ -1,14 +1,42 @@
 services:
+  db:
+    image: postgres:16.1
+    container_name: explorewithme
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=explorewithme
+      - POSTGRES_USER=dbuser
+      - POSTGRES_PASSWORD=12345
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10
+
+
   stats-server:
+    build:
+      context: ./stats/server
+      dockerfile: Dockerfile
+    depends_on:
+      - db
     ports:
       - "9090:9090"
-
-  stats-db:
-    image: postgres:16.1
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/explorewithme
+      - SPRING_DATASOURCE_USERNAME=dbuser
+      - SPRING_DATASOURCE_PASSWORD=12345
+    command: sh -c "sleep 10 && java -jar app.jar"
 
   ewm-service:
+    restart: on-failure
+    build: ./main
+    image: ewm-main-service
+    container_name: "ewm-main-service"
     ports:
       - "8080:8080"
-
-  ewm-db:
-    image: postgres:16.1
+    depends_on:
+      - stats-server
+    environment:
+      - STATS_SERVER_URL=http://stats-server:9090
