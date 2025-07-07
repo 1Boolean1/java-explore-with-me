@@ -6,7 +6,7 @@ import ru.practicum.explorewithme.server.models.Hit;
 
 @UtilityClass
 public class HitMapper {
-    public Hit mapToHit(HitDto hitDto) {
+    public static Hit mapToHit(HitDto hitDto) {
         return new Hit(
                 hitDto.getId(),
                 hitDto.getApp(),

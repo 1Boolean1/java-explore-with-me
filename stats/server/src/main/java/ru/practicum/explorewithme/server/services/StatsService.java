@@ -1,6 +1,7 @@
 package ru.practicum.explorewithme.server.services;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.dto.dtos.GetHitDto;
 import ru.practicum.explorewithme.dto.dtos.HitDto;
 import ru.practicum.explorewithme.server.mappers.HitMapper;
@@ -39,6 +40,7 @@ public class StatsService implements Service {
         }
     }
 
+    @Transactional
     @Override
     public void saveHit(HitDto hitDto) {
         hitDto.setTime(LocalDateTime.now());

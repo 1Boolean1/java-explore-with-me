@@ -9,7 +9,6 @@ import ru.practicum.explorewithme.server.models.Hit;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Repository
 public interface StatsRepository extends JpaRepository<Hit, Integer> {
     @Query("SELECT new ru.practicum.explorewithme.dto.dtos.GetHitDto(h.app, h.uri, COUNT(DISTINCT h.ip)) FROM Hit h " +
             "WHERE h.time BETWEEN ?1 AND ?2 " +
