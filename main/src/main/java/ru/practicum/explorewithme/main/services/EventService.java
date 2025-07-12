@@ -2,6 +2,7 @@ package ru.practicum.explorewithme.main.services;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.explorewithme.main.dtos.EventCreateDto;
 import ru.practicum.explorewithme.main.dtos.EventDto;
@@ -136,18 +137,21 @@ public class EventService {
             throw new BadRequestException("rangeEnd is before rangeStart");
         }
 
+        int page = from / size;
+        PageRequest pageRequest = PageRequest.of(page, size);
+
         switch (sort) {
             case "EVENT_DATE":
                 if (onlyAvailable) {
-                    return eventRepository.getOpenAvailableEventsSortsByEventDate(text, categories, paid, rangeStart, rangeEnd, from, size);
+                    return eventRepository.getOpenAvailableEventsSortsByEventDate(text, categories, paid, rangeStart, rangeEnd, pageRequest).stream().map(EventMapper::toDto).toList();
                 } else {
-                    return eventRepository.getOpenUnAvailableEventsSortsByEventDate(text, categories, paid, rangeStart, rangeEnd, from, size);
+                    return eventRepository.getOpenUnAvailableEventsSortsByEventDate(text, categories, paid, rangeStart, rangeEnd, pageRequest).stream().map(EventMapper::toDto).toList();
                 }
             case "VIEWS":
                 if (onlyAvailable) {
-                    return eventRepository.getOpenAvailableEventsSortsByViews(text, categories, paid, rangeStart, rangeEnd, from, size);
+                    return eventRepository.getOpenAvailableEventsSortsByViews(text, categories, paid, rangeStart, rangeEnd, pageRequest).stream().map(EventMapper::toDto).toList();
                 } else {
-                    return eventRepository.getOpenUnAvailableEventsSortsByViews(text, categories, paid, rangeStart, rangeEnd, from, size);
+                    return eventRepository.getOpenUnAvailableEventsSortsByViews(text, categories, paid, rangeStart, rangeEnd, pageRequest).stream().map(EventMapper::toDto).toList();
                 }
             default:
                 log.error("Invalid sort value");
@@ -156,7 +160,7 @@ public class EventService {
     }
 
     public List<EventDto> getEvents(List<Long> usersIds,
-                                    List<String> states,
+                                    List<State> states,
                                     List<Long> categoriesIds,
                                     LocalDateTime rangeStart,
                                     LocalDateTime rangeEnd,
@@ -176,7 +180,10 @@ public class EventService {
             throw new BadRequestException("rangeEnd is before rangeStart");
         }
 
-        return eventRepository.getAllEvents(usersIds, states, categoriesIds, rangeStart, rangeEnd, from, size);
+        int page = from / size;
+        PageRequest pageRequest = PageRequest.of(page, size);
+
+        return eventRepository.getAllEvents(usersIds, states, categoriesIds, rangeStart, rangeEnd, pageRequest).stream().map(EventMapper::toDto).toList();
     }
 
     @Transactional

@@ -1,6 +1,7 @@
 package ru.practicum.explorewithme.main.services;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.explorewithme.main.dtos.UserCreateDto;
 import ru.practicum.explorewithme.main.dtos.UserDto;
@@ -41,10 +42,12 @@ public class UserService {
             log.error("From must be less than or equal to users count");
             throw new BadRequestException("From must be less than or equal to users count");
         }
+        int page = from / size;
+        PageRequest pageRequest = PageRequest.of(page, size);
         if (ids.isEmpty()) {
             return userRepository.findAll(from, size);
         } else {
-            return userRepository.findByIds(ids, from, size);
+            return userRepository.findByIds(ids, pageRequest);
         }
     }
 

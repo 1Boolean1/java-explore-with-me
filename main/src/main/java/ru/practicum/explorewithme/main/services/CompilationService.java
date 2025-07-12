@@ -1,6 +1,7 @@
 package ru.practicum.explorewithme.main.services;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.explorewithme.main.dtos.AddCompilationDto;
 import ru.practicum.explorewithme.main.dtos.CompilationDto;
@@ -91,7 +92,9 @@ public class CompilationService {
             log.error("From must be less than or equal to compilations count");
             throw new BadRequestException("From must be less than or equal to compilations count");
         }
-        return compilationRepository.findByPinned(pinned, from, size);
+        int page = from / size;
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return compilationRepository.findByPinned(pinned, pageRequest);
     }
 
     public CompilationDto getCompilation(Long id) {

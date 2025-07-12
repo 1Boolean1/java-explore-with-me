@@ -2,6 +2,7 @@ package ru.practicum.explorewithme.main.services;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.explorewithme.main.dtos.CategoryCreateDto;
 import ru.practicum.explorewithme.main.dtos.CategoryDto;
@@ -73,8 +74,9 @@ public class CategoryService {
             log.error("From must be less than or equal to category count");
             throw new BadRequestException("From must be less than or equal to category count");
         }
-
-        return categoryRepository.findCategoriesWithFromAndSize(from, size);
+        int page = from / size;
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return categoryRepository.findCategoriesWithFromAndSize(pageRequest);
     }
 
     public CategoryDto getCategoryById(Long categoryId) {
