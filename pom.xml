@@ -18,9 +18,7 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>stats/dto</module>
-		<module>stats/gateway</module>
-		<module>stats/server</module>
+		<module>stats</module>
 		<module>main</module>
 	</modules>
 
