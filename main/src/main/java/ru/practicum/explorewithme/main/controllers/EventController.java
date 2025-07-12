@@ -7,7 +7,6 @@ import ru.practicum.explorewithme.gateway.client.StatsClient;
 import ru.practicum.explorewithme.main.dtos.EventCreateDto;
 import ru.practicum.explorewithme.main.dtos.EventDto;
 import ru.practicum.explorewithme.main.dtos.UpdateEventDto;
-import ru.practicum.explorewithme.main.models.State;
 import ru.practicum.explorewithme.main.services.EventService;
 
 import java.time.LocalDateTime;
@@ -78,7 +77,7 @@ public class EventController {
     //написать дефолт значения для состояний
     @GetMapping("/admin/events")
     public List<EventDto> getEvents(@RequestParam(required = false) List<Long> usersIds,
-                                    @RequestParam(required = false) List<State> states,
+                                    @RequestParam(required = false) List<String> states,
                                     @RequestParam(required = false) List<Long> categoriesIds,
                                     @RequestParam(required = false) LocalDateTime rangeStart,
                                     @RequestParam(required = false) LocalDateTime rangeEnd,

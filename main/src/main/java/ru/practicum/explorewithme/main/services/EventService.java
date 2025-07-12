@@ -156,7 +156,7 @@ public class EventService {
     }
 
     public List<EventDto> getEvents(List<Long> usersIds,
-                                    List<State> states,
+                                    List<String> states,
                                     List<Long> categoriesIds,
                                     LocalDateTime rangeStart,
                                     LocalDateTime rangeEnd,
@@ -176,7 +176,7 @@ public class EventService {
             throw new BadRequestException("rangeEnd is before rangeStart");
         }
 
-        return eventRepository.getAllEvents(usersIds, states.stream().map(Enum::name).toList(), categoriesIds, rangeStart, rangeEnd, from, size);
+        return eventRepository.getAllEvents(usersIds, states, categoriesIds, rangeStart, rangeEnd, from, size);
     }
 
     @Transactional
