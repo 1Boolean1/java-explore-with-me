@@ -78,11 +78,6 @@
             <artifactId>gateway</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>ru.practicum.ExploreWithMe</groupId>
-            <artifactId>gateway</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
     </dependencies>
 
     <build>
