@@ -98,7 +98,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "ORDER BY e.eventDate " +
             "LIMIT ?7 OFFSET ?6")
     List<EventDto> getAllEvents(List<Long> usersIds,
-                                List<State> states,
+                                List<String> states,
                                 List<Long> categoriesIds,
                                 LocalDateTime rangeStart,
                                 LocalDateTime rangeEnd,

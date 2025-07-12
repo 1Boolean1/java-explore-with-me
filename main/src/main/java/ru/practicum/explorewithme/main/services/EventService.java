@@ -176,7 +176,7 @@ public class EventService {
             throw new BadRequestException("rangeEnd is before rangeStart");
         }
 
-        return eventRepository.getAllEvents(usersIds, states, categoriesIds, rangeStart, rangeEnd, from, size);
+        return eventRepository.getAllEvents(usersIds, states.stream().map(Enum::name).toList(), categoriesIds, rangeStart, rangeEnd, from, size);
     }
 
     @Transactional
