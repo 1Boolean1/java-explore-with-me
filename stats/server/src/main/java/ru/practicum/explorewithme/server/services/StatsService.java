@@ -5,6 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.dto.dtos.GetHitDto;
 import ru.practicum.explorewithme.dto.dtos.HitDto;
 import ru.practicum.explorewithme.server.mappers.HitMapper;
+import ru.practicum.explorewithme.server.models.Hit;
 import ru.practicum.explorewithme.server.repositories.StatsRepository;
 
 import java.time.LocalDateTime;
@@ -43,7 +44,12 @@ public class StatsService implements Service {
     @Transactional
     @Override
     public void saveHit(HitDto hitDto) {
-        repository.save(HitMapper.mapToHit(hitDto));
+        Hit hit = new Hit();
+        hit.setIp(hitDto.getIp());
+        hit.setUri(hitDto.getUri());
+        hit.setTime(hitDto.getTime());
+        hit.setApp(hitDto.getApp());
+        repository.save(hit);
     }
 }
 

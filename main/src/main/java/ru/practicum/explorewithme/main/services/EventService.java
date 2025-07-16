@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import ru.practicum.explorewithme.gateway.client.StatsClient;
 import ru.practicum.explorewithme.main.dtos.EventCreateDto;
 import ru.practicum.explorewithme.main.dtos.EventDto;
 import ru.practicum.explorewithme.main.dtos.UpdateEventDto;
@@ -17,10 +18,10 @@ import ru.practicum.explorewithme.main.repositories.CategoryRepository;
 import ru.practicum.explorewithme.main.repositories.EventRepository;
 import ru.practicum.explorewithme.main.repositories.LocationRepository;
 import ru.practicum.explorewithme.main.repositories.UserRepository;
-import ru.practicum.explorewithme.server.controllers.StatsController;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -29,14 +30,14 @@ public class EventService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final LocationRepository locationRepository;
-    private final StatsController statsController;
+    private final StatsClient statsClient;
 
-    public EventService(EventRepository eventRepository, CategoryRepository categoryRepository, UserRepository userRepository, LocationRepository locationRepository, StatsController statsController) {
+    public EventService(EventRepository eventRepository, CategoryRepository categoryRepository, UserRepository userRepository, LocationRepository locationRepository, StatsClient statsClient) {
         this.eventRepository = eventRepository;
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
         this.locationRepository = locationRepository;
-        this.statsController = statsController;
+        this.statsClient = statsClient;
     }
 
     @Transactional
@@ -165,8 +166,8 @@ public class EventService {
             log.error("State is not published");
             throw new NotFoundException("State is not published");
         }
-        if (!statsController.getStat(event.getCreatedOn(), LocalDateTime.now(), List.of(uri), true).isEmpty()) {
-            event.setViews(statsController.getStat(event.getCreatedOn(), LocalDateTime.now(), List.of(uri), true).size());
+        if (statsClient.getStat(event.getCreatedOn(), LocalDateTime.now(), List.of(uri), true).getBody() != null) {
+            event.setViews(Objects.requireNonNull(statsClient.getStat(event.getCreatedOn(), LocalDateTime.now(), List.of(uri), true).getBody()).size());
         } else {
             event.setViews(0);
         }
@@ -207,8 +208,8 @@ public class EventService {
                     List<Event> events = eventRepository.getOpenAvailableEventsSortsByEventDate(text, categories, paid, rangeStart, rangeEnd, pageRequest);
 
                     for (Event event : events) {
-                        if (!statsController.getStat(event.getCreatedOn(), LocalDateTime.now(), List.of(uri), true).isEmpty()) {
-                            event.setViews(statsController.getStat(event.getCreatedOn(), LocalDateTime.now(), List.of(uri), true).size());
+                        if (!Objects.requireNonNull(statsClient.getStat(event.getCreatedOn(), LocalDateTime.now(), List.of(uri), true).getBody()).isEmpty()) {
+                            event.setViews(Objects.requireNonNull(statsClient.getStat(event.getCreatedOn(), LocalDateTime.now(), List.of(uri), true).getBody()).size());
                         } else {
                             event.setViews(0);
                         }
@@ -224,8 +225,8 @@ public class EventService {
                     List<Event> events = eventRepository.getOpenUnAvailableEventsSortsByEventDate(text, categories, paid, rangeStart, rangeEnd, pageRequest);
 
                     for (Event event : events) {
-                        if (!statsController.getStat(event.getCreatedOn(), LocalDateTime.now(), List.of(uri), true).isEmpty()) {
-                            event.setViews(statsController.getStat(event.getCreatedOn(), LocalDateTime.now(), List.of(uri), true).size());
+                        if (!Objects.requireNonNull(statsClient.getStat(event.getCreatedOn(), LocalDateTime.now(), List.of(uri), true).getBody()).isEmpty()) {
+                            event.setViews(Objects.requireNonNull(statsClient.getStat(event.getCreatedOn(), LocalDateTime.now(), List.of(uri), true).getBody()).size());
                         } else {
                             event.setViews(0);
                         }
@@ -243,8 +244,8 @@ public class EventService {
                     List<Event> events = eventRepository.getOpenAvailableEventsSortsByViews(text, categories, paid, rangeStart, rangeEnd, pageRequest);
 
                     for (Event event : events) {
-                        if (!statsController.getStat(event.getCreatedOn(), LocalDateTime.now(), List.of(uri), true).isEmpty()) {
-                            event.setViews(statsController.getStat(event.getCreatedOn(), LocalDateTime.now(), List.of(uri), true).size());
+                        if (!Objects.requireNonNull(statsClient.getStat(event.getCreatedOn(), LocalDateTime.now(), List.of(uri), true).getBody()).isEmpty()) {
+                            event.setViews(Objects.requireNonNull(statsClient.getStat(event.getCreatedOn(), LocalDateTime.now(), List.of(uri), true).getBody()).size());
                         } else {
                             event.setViews(0);
                         }
@@ -260,8 +261,8 @@ public class EventService {
                     List<Event> events = eventRepository.getOpenUnAvailableEventsSortsByViews(text, categories, paid, rangeStart, rangeEnd, pageRequest);
 
                     for (Event event : events) {
-                        if (!statsController.getStat(event.getCreatedOn(), LocalDateTime.now(), List.of(uri), true).isEmpty()) {
-                            event.setViews(statsController.getStat(event.getCreatedOn(), LocalDateTime.now(), List.of(uri), true).size());
+                        if (!Objects.requireNonNull(statsClient.getStat(event.getCreatedOn(), LocalDateTime.now(), List.of(uri), true).getBody()).isEmpty()) {
+                            event.setViews(Objects.requireNonNull(statsClient.getStat(event.getCreatedOn(), LocalDateTime.now(), List.of(uri), true).getBody()).size());
                         } else {
                             event.setViews(0);
                         }

@@ -7,13 +7,11 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explorewithme.dto.dtos.HitDto;
+import ru.practicum.explorewithme.gateway.client.StatsClient;
 import ru.practicum.explorewithme.main.dtos.EventCreateDto;
 import ru.practicum.explorewithme.main.dtos.EventDto;
 import ru.practicum.explorewithme.main.dtos.UpdateEventDto;
 import ru.practicum.explorewithme.main.services.EventService;
-import ru.practicum.explorewithme.server.controllers.StatsController;
-import ru.practicum.explorewithme.server.mappers.HitMapper;
-import ru.practicum.explorewithme.server.models.Hit;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,11 +20,11 @@ import java.util.List;
 @Slf4j
 public class EventController {
     private final EventService eventService;
-    private final StatsController statsController;
+    private final StatsClient statsClient;
 
-    public EventController(final EventService eventService, StatsController statsController) {
+    public EventController(final EventService eventService, StatsClient statsClient) {
         this.eventService = eventService;
-        this.statsController = statsController;
+        this.statsClient = statsClient;
     }
 
 
@@ -48,7 +46,7 @@ public class EventController {
         hitDto.setIp(request.getRemoteAddr());
         hitDto.setUri(request.getRequestURI());
         hitDto.setTime(LocalDateTime.now());
-        statsController.saveHit(hitDto);
+        statsClient.saveHit(hitDto);
         log.info("createUserEvent userId = {}", userId);
         return eventService.save(userId, eventDto);
     }
@@ -62,7 +60,7 @@ public class EventController {
         hitDto.setIp(request.getRemoteAddr());
         hitDto.setUri(request.getRequestURI());
         hitDto.setTime(LocalDateTime.now());
-        statsController.saveHit(hitDto);
+        statsClient.saveHit(hitDto);
         log.info("getUserEvent userId = {}, eventId = {}", userId, eventId);
         return eventService.getByUserIdAndEventId(userId, eventId);
     }
@@ -77,7 +75,7 @@ public class EventController {
         hitDto.setIp(request.getRemoteAddr());
         hitDto.setUri(request.getRequestURI());
         hitDto.setTime(LocalDateTime.now());
-        statsController.saveHit(hitDto);
+        statsClient.saveHit(hitDto);
         log.info("updateEvent userId = {}, eventId = {}", userId, eventId);
         return eventService.patchEvent(userId, eventId, updateEventDto);
     }
@@ -90,7 +88,7 @@ public class EventController {
         hitDto.setIp(request.getRemoteAddr());
         hitDto.setUri(request.getRequestURI());
         hitDto.setTime(LocalDateTime.now());
-        statsController.saveHit(hitDto);
+        statsClient.saveHit(hitDto);
         log.info("getEvent userId = {}", id);
         return eventService.getByEventId(id, request.getRequestURI());
     }
@@ -106,12 +104,12 @@ public class EventController {
                                         @RequestParam(name = "from", defaultValue = "0") Integer from,
                                         @RequestParam(name = "size", defaultValue = "10") Integer size,
                                         HttpServletRequest request) {
-        Hit hit = new Hit();
+        HitDto hit = new HitDto();
         hit.setApp("explorewithme");
         hit.setIp(request.getRemoteAddr());
         hit.setUri(request.getRequestURI());
         hit.setTime(LocalDateTime.now());
-        statsController.saveHit(HitMapper.mapToDto(hit));
+        statsClient.saveHit(hit);
         log.info("Get events");
         return eventService.getOpenEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size, request.getRequestURI());
     }
@@ -137,7 +135,7 @@ public class EventController {
         hitDto.setIp(request.getRemoteAddr());
         hitDto.setUri(request.getRequestURI());
         hitDto.setTime(LocalDateTime.now());
-        statsController.saveHit(hitDto);
+        statsClient.saveHit(hitDto);
         log.info("updateEvent userId = {}", eventId);
         return eventService.patchEventByAdmin(eventId, updateEventDto);
     }
