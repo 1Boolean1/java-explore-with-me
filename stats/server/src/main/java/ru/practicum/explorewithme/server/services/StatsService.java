@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.dto.dtos.GetHitDto;
 import ru.practicum.explorewithme.dto.dtos.HitDto;
-import ru.practicum.explorewithme.server.mappers.HitMapper;
 import ru.practicum.explorewithme.server.models.Hit;
 import ru.practicum.explorewithme.server.repositories.StatsRepository;
 
