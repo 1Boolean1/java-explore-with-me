@@ -43,7 +43,6 @@ public class StatsService implements Service {
     @Transactional
     @Override
     public void saveHit(HitDto hitDto) {
-        hitDto.setTime(LocalDateTime.now());
         repository.save(HitMapper.mapToHit(hitDto));
     }
 }

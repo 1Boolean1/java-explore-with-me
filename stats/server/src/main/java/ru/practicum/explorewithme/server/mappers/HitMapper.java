@@ -14,4 +14,14 @@ public class HitMapper {
                 hitDto.getIp(),
                 hitDto.getTime());
     }
+
+    public static HitDto mapToDto(Hit hit) {
+        return new HitDto(
+                hit.getId(),
+                hit.getApp(),
+                hit.getUri(),
+                hit.getIp(),
+                hit.getTime()
+        );
+    }
 }

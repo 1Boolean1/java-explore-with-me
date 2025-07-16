@@ -7,10 +7,12 @@ import org.springframework.stereotype.Service;
 import ru.practicum.explorewithme.main.dtos.CategoryCreateDto;
 import ru.practicum.explorewithme.main.dtos.CategoryDto;
 import ru.practicum.explorewithme.main.exceptions.BadRequestException;
+import ru.practicum.explorewithme.main.exceptions.ExistsException;
 import ru.practicum.explorewithme.main.exceptions.NotFoundException;
 import ru.practicum.explorewithme.main.mappers.CategoryMapper;
 import ru.practicum.explorewithme.main.models.Category;
 import ru.practicum.explorewithme.main.repositories.CategoryRepository;
+import ru.practicum.explorewithme.main.repositories.EventRepository;
 
 import java.util.List;
 
@@ -18,9 +20,11 @@ import java.util.List;
 @Slf4j
 public class CategoryService {
     private final CategoryRepository categoryRepository;
+    private final EventRepository eventRepository;
 
-    public CategoryService(CategoryRepository categoryRepository) {
+    public CategoryService(CategoryRepository categoryRepository, EventRepository eventRepository) {
         this.categoryRepository = categoryRepository;
+        this.eventRepository = eventRepository;
     }
 
     @Transactional
@@ -28,6 +32,10 @@ public class CategoryService {
         if (categoryDto.getName().isBlank()) {
             log.error("Category name is blank");
             throw new BadRequestException("Name cannot be blank");
+        }
+        if (categoryRepository.findAll().stream().anyMatch(c -> c.getName().equals(categoryDto.getName()))) {
+            log.error("Category name already exists");
+            throw new ExistsException("Category name already exists");
         }
         Category newCategory = new Category();
         newCategory.setName(categoryDto.getName());
@@ -39,6 +47,10 @@ public class CategoryService {
 
     @Transactional
     public void deleteCategory(Long categoryId) {
+        if (eventRepository.findAll().stream().anyMatch(event -> event.getCategory().getId().equals(categoryId))) {
+            log.error("Event with this category already exist");
+            throw new ExistsException("Event with this category already exist");
+        }
         if (categoryRepository.findById(categoryId.intValue()).isEmpty()) {
             log.error("Category with id {} not found", categoryId);
             throw new NotFoundException("Category does not exist");
@@ -47,13 +59,19 @@ public class CategoryService {
     }
 
     @Transactional
-    public CategoryDto patchCategory(CategoryDto categoryDto) {
-        Category existingCategory = categoryRepository.findById(categoryDto.getId().intValue())
+    public CategoryDto patchCategory(Long categoryId, CategoryDto categoryDto) {
+        Category existingCategory = categoryRepository.findById(categoryId.intValue())
                 .orElseThrow(() -> new NotFoundException("Category does not exist"));
 
         boolean needsUpdate = false;
 
         if (categoryDto.getName() != null && !categoryDto.getName().isBlank()) {
+            if (categoryRepository.findAll().stream().anyMatch(c -> c.getName().equals(categoryDto.getName()))) {
+                if (!existingCategory.getName().equals(categoryDto.getName())) {
+                    log.error("Category name already exists");
+                    throw new ExistsException("Category name already exists");
+                }
+            }
             if (!existingCategory.getName().equals(categoryDto.getName())) {
                 log.info("Updating category with name {}", categoryDto.getName());
                 existingCategory.setName(categoryDto.getName());
@@ -70,10 +88,6 @@ public class CategoryService {
     }
 
     public List<CategoryDto> getCategories(int from, int size) {
-        if (from < categoryRepository.findAll().size()) {
-            log.error("From must be less than or equal to category count");
-            throw new BadRequestException("From must be less than or equal to category count");
-        }
         int page = from / size;
         PageRequest pageRequest = PageRequest.of(page, size);
         return categoryRepository.findCategoriesWithFromAndSize(pageRequest);

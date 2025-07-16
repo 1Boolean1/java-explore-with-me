@@ -1,9 +1,10 @@
 package ru.practicum.explorewithme.main.dtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
+import org.hibernate.validator.constraints.Length;
 import ru.practicum.explorewithme.main.models.Location;
 
 import java.time.LocalDateTime;
@@ -13,21 +14,32 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class EventCreateDto {
+    @NotBlank
+    @NotNull
+    @Length(min = 20, max = 2000)
     private String annotation;
 
-    private Long categoryId;
+    private Long category;
 
+    @NotBlank
+    @NotNull
+    @Length(min = 20, max = 7000)
     private String description;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
 
+    @NotNull
     private Location location;
 
-    private Boolean paid;
+    private Boolean paid = false;
 
-    private int participantLimit;
+    private int participantLimit = 0;
 
-    private Boolean requestModeration;
+    private Boolean requestModeration = true;
 
+    @NotBlank
+    @NotNull
+    @Length(min = 3, max = 120)
     private String title;
 }

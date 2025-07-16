@@ -1,18 +1,18 @@
 package ru.practicum.explorewithme.main.dtos;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CategoryCreateDto {
-    @NotBlank
-    @Size(max = 50)
-    private String name;
+public class PatchStatusRequestDto {
+    List<Long> requestIds = new ArrayList<>();
+    String status;
 }

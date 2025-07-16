@@ -1,5 +1,8 @@
 package ru.practicum.explorewithme.main.models;
 
 public enum RequestsStatus {
-    PENDING
+    PENDING,
+    CONFIRMED,
+    REJECTED,
+    CANCELED
 }

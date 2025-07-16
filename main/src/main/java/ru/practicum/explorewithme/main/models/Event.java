@@ -19,7 +19,7 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String annotation;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -32,7 +32,7 @@ public class Event {
     @Column(nullable = false)
     private LocalDateTime createdOn;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
     @Column(nullable = false)
@@ -52,7 +52,7 @@ public class Event {
     @Column(nullable = false)
     private int participantLimit;
 
-    @Column(nullable = false)
+    @Column
     private LocalDateTime publishedOn;
 
     @Column(nullable = false)
@@ -65,5 +65,5 @@ public class Event {
     private String title;
 
     @Column(nullable = false)
-    private Long views;
+    private int views;
 }

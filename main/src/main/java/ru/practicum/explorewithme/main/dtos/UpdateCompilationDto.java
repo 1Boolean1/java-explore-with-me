@@ -1,5 +1,6 @@
 package ru.practicum.explorewithme.main.dtos;
 
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,5 +18,6 @@ public class UpdateCompilationDto {
 
     private Boolean pinned = Boolean.FALSE;
 
+    @Size(max = 50)
     private String title;
 }

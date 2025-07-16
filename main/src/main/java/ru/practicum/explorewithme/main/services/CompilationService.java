@@ -14,6 +14,7 @@ import ru.practicum.explorewithme.main.models.Event;
 import ru.practicum.explorewithme.main.repositories.CompilationRepository;
 import ru.practicum.explorewithme.main.repositories.EventRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -32,12 +33,17 @@ public class CompilationService {
             log.error("Title is blank");
             throw new BadRequestException("Title is blank");
         }
-        CompilationDto compilationDto = new CompilationDto();
-        compilationDto.setTitle(addCompilationDto.getTitle());
-        compilationDto.setPinned(addCompilationDto.getPinned());
-        compilationDto.setEvents(eventRepository.findAllById(addCompilationDto.getEventsIds()));
-        compilationRepository.save(CompilationMapper.mapToCompilation(compilationDto));
-        return compilationDto;
+        Compilation compilation = new Compilation();
+        compilation.setTitle(addCompilationDto.getTitle());
+        compilation.setPinned(addCompilationDto.getPinned());
+        List<Event> events = new ArrayList<>();
+        for (Long id : addCompilationDto.getEvents()) {
+            events.add(eventRepository.findById(id).orElseThrow(
+                    () -> new NotFoundException("No event found with id: " + id)
+            ));
+        }
+        compilation.setEvents(events);
+        return CompilationMapper.mapToCompilationDto(compilationRepository.save(compilation));
     }
 
     public void deleteCompilation(final Long id) {
@@ -70,12 +76,14 @@ public class CompilationService {
             }
             needsUpdate = true;
         }
-        if (!updateCompilationDto.getEventsIds().isEmpty()) {
-            List<Long> eventsIds = existingCompilation.getEvents().stream().map(Event::getId).toList();
-            if (!eventsIds.equals(updateCompilationDto.getEventsIds())) {
-                log.info("Updating existing events");
-                List<Event> events = eventRepository.findAllById(updateCompilationDto.getEventsIds());
-                existingCompilation.setEvents(events);
+        if (updateCompilationDto.getEventsIds() != null) {
+            if (!updateCompilationDto.getEventsIds().isEmpty()) {
+                List<Long> eventsIds = existingCompilation.getEvents().stream().map(Event::getId).toList();
+                if (!eventsIds.equals(updateCompilationDto.getEventsIds())) {
+                    log.info("Updating existing events");
+                    List<Event> events = eventRepository.findAllById(updateCompilationDto.getEventsIds());
+                    existingCompilation.setEvents(events);
+                }
             }
         }
 
@@ -87,14 +95,10 @@ public class CompilationService {
         }
     }
 
-    public List<CompilationDto> getCompilations(Boolean pinned, Integer from, Integer size) {
-        if (from < compilationRepository.findAll().size()) {
-            log.error("From must be less than or equal to compilations count");
-            throw new BadRequestException("From must be less than or equal to compilations count");
-        }
+    public List<CompilationDto> getCompilations(boolean pinned, Integer from, Integer size) {
         int page = from / size;
         PageRequest pageRequest = PageRequest.of(page, size);
-        return compilationRepository.findByPinned(pinned, pageRequest);
+        return compilationRepository.findByPinned(pinned, pageRequest).stream().map(CompilationMapper::mapToCompilationDto).toList();
     }
 
     public CompilationDto getCompilation(Long id) {

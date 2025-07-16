@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.practicum.explorewithme.main.models.Event;
 
 import java.util.List;
 
@@ -18,7 +17,7 @@ public class CompilationDto {
     @Min(1)
     private Long id;
 
-    private List<Event> events;
+    private List<EventDto> events;
 
     private Boolean pinned;
 

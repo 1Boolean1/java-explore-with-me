@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.explorewithme.main.dtos.UserCreateDto;
 import ru.practicum.explorewithme.main.dtos.UserDto;
 import ru.practicum.explorewithme.main.exceptions.BadRequestException;
+import ru.practicum.explorewithme.main.exceptions.ExistsException;
 import ru.practicum.explorewithme.main.exceptions.NotFoundException;
 import ru.practicum.explorewithme.main.mappers.UserMapper;
 import ru.practicum.explorewithme.main.models.User;
@@ -23,9 +24,17 @@ public class UserService {
     }
 
     public UserDto saveUser(UserCreateDto userDto) {
+        if (userDto.getEmail() == null || userDto.getName() == null) {
+            log.error("Email or name is null");
+            throw new BadRequestException("Email or name cannot be null");
+        }
         if (userDto.getEmail().isBlank() || userDto.getName().isBlank()) {
             log.error("Email or name is blank");
             throw new BadRequestException("Email or name cannot be blank");
+        }
+        if (userRepository.findAll().stream().anyMatch(user -> user.getEmail().equals(userDto.getEmail()))) {
+            log.error("Email already exists");
+            throw new ExistsException("Email already exists");
         }
 
         User newUser = new User();
@@ -38,13 +47,11 @@ public class UserService {
     }
 
     public List<UserDto> getUsers(List<Long> ids, int from, int size) {
-        if (from < userRepository.findAll().size()) {
-            log.error("From must be less than or equal to users count");
-            throw new BadRequestException("From must be less than or equal to users count");
-        }
         int page = from / size;
         PageRequest pageRequest = PageRequest.of(page, size);
-        if (ids.isEmpty()) {
+        if (ids == null) {
+            return userRepository.findAll(from, size);
+        } else if (ids.isEmpty()) {
             return userRepository.findAll(from, size);
         } else {
             return userRepository.findByIds(ids, pageRequest);

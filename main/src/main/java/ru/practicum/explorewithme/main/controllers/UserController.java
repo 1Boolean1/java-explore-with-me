@@ -1,9 +1,9 @@
 package ru.practicum.explorewithme.main.controllers;
 
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.explorewithme.gateway.client.StatsClient;
 import ru.practicum.explorewithme.main.dtos.UserCreateDto;
 import ru.practicum.explorewithme.main.dtos.UserDto;
 import ru.practicum.explorewithme.main.services.UserService;
@@ -15,31 +15,27 @@ import java.util.List;
 @RequestMapping("/admin/users")
 public class UserController {
     private final UserService userService;
-    private final StatsClient statsClient;
 
-    public UserController(UserService userService, StatsClient statsClient) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.statsClient = statsClient;
     }
 
     @PostMapping
-    public UserDto createUser(@RequestBody UserCreateDto user, HttpServletRequest request) {
-        statsClient.saveStats("explore-with-me", request.getRequestURI(), request.getRemoteAddr());
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserDto createUser(@RequestBody @Valid UserCreateDto user) {
         return userService.saveUser(user);
     }
 
     @GetMapping
-    public List<UserDto> getUsers(@RequestParam List<Long> ids,
+    public List<UserDto> getUsers(@RequestParam(required = false) List<Long> ids,
                                   @RequestParam(defaultValue = "0") int from,
-                                  @RequestParam(defaultValue = "10") int size,
-                                  HttpServletRequest request) {
-        statsClient.saveStats("explore-with-me", request.getRequestURI(), request.getRemoteAddr());
+                                  @RequestParam(defaultValue = "10") int size) {
         return userService.getUsers(ids, from, size);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Long id, HttpServletRequest request) {
-        statsClient.saveStats("explore-with-me", request.getRequestURI(), request.getRemoteAddr());
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
     }
 }
