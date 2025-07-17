@@ -142,11 +142,11 @@ public class RequestService {
 
 
         for (Request request : requestsToUpdate) {
-            if (!request.getStatus().equals(RequestsStatus.PENDING)) {
+            if (request.getStatus() != RequestsStatus.PENDING) {
                 throw new ExistsException("Request ID " + request.getId() + " is not in PENDING state.");
             }
 
-            if (patchDto.getStatus().equals(RequestsStatus.CONFIRMED)) {
+            if (patchDto.getStatus() == RequestsStatus.CONFIRMED) {
                 if (event.getConfirmedRequests() < event.getParticipantLimit()) {
                     request.setStatus(RequestsStatus.CONFIRMED);
                     event.setConfirmedRequests(event.getConfirmedRequests() + 1);
@@ -158,7 +158,7 @@ public class RequestService {
                     requestRepository.save(request);
                     rejectedRequests.add(RequestMapper.toDto(request));
                 }
-            } else if (patchDto.getStatus().equals(RequestsStatus.REJECTED)) {
+            } else if (patchDto.getStatus() == RequestsStatus.REJECTED) {
                 request.setStatus(RequestsStatus.REJECTED);
                 requestRepository.save(request);
                 rejectedRequests.add(RequestMapper.toDto(request));

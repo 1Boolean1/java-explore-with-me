@@ -1,6 +1,7 @@
 package ru.practicum.explorewithme.main.mappers;
 
 import ru.practicum.explorewithme.main.dtos.EventDto;
+import ru.practicum.explorewithme.main.dtos.EventShortDto;
 import ru.practicum.explorewithme.main.models.Event;
 
 public class EventMapper {
@@ -20,6 +21,20 @@ public class EventMapper {
                 event.getPublishedOn(),
                 event.getRequestModeration(),
                 event.getState(),
+                event.getTitle(),
+                event.getViews()
+        );
+    }
+
+    public static EventShortDto toEventShortDto(Event event) {
+        return new EventShortDto(
+                event.getId(),
+                event.getAnnotation(),
+                CategoryMapper.mapCategoryToCategoryDto(event.getCategory()),
+                event.getConfirmedRequests(),
+                event.getEventDate(),
+                UserMapper.toUserShortDto(event.getInitiator()),
+                event.getPaid(),
                 event.getTitle(),
                 event.getViews()
         );

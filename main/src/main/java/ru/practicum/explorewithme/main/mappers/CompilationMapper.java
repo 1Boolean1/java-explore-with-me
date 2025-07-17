@@ -8,7 +8,7 @@ public class CompilationMapper {
     public static CompilationDto mapToCompilationDto(final Compilation compilation) {
         return new CompilationDto(
                 compilation.getId(),
-                compilation.getEvents().stream().map(EventMapper::toDto).toList(),
+                compilation.getEvents().stream().map(EventMapper::toEventShortDto).toList(),
                 compilation.getPinned(),
                 compilation.getTitle()
         );

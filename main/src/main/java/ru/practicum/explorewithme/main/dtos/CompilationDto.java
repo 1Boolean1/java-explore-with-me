@@ -17,7 +17,7 @@ public class CompilationDto {
     @Min(1)
     private Long id;
 
-    private List<EventDto> events;
+    private List<EventShortDto> events;
 
     private Boolean pinned;
 
