@@ -28,7 +28,6 @@ public class StatsClient {
                                                 LocalDateTime end,
                                                 List<String> uris,
                                                 Boolean unique) {
-
         return webClient.get()
                 .uri(uriBuilder -> {
                     uriBuilder.path("/stats")
