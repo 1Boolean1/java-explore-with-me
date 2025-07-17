@@ -4,7 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.dto.dtos.GetHitDto;
 import ru.practicum.explorewithme.dto.dtos.HitDto;
-import ru.practicum.explorewithme.server.mappers.HitMapper;
+import ru.practicum.explorewithme.server.exceptions.BadRequestException;
+import ru.practicum.explorewithme.server.models.Hit;
 import ru.practicum.explorewithme.server.repositories.StatsRepository;
 
 import java.time.LocalDateTime;
@@ -21,6 +22,10 @@ public class StatsService implements Service {
 
     @Override
     public List<GetHitDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
+        if (start.isAfter(end)) {
+            log.error("Start is after end");
+            throw new BadRequestException("Start is after end");
+        }
         if (uris == null) {
             if (unique) {
                 log.info("Getting uniq stats from %s to %s(server)", start, end);
@@ -43,8 +48,12 @@ public class StatsService implements Service {
     @Transactional
     @Override
     public void saveHit(HitDto hitDto) {
-        hitDto.setTime(LocalDateTime.now());
-        repository.save(HitMapper.mapToHit(hitDto));
+        Hit hit = new Hit();
+        hit.setIp(hitDto.getIp());
+        hit.setUri(hitDto.getUri());
+        hit.setTime(LocalDateTime.now());
+        hit.setApp(hitDto.getApp());
+        repository.save(hit);
     }
 }
 

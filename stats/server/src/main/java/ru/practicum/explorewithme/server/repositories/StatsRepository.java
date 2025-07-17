@@ -33,4 +33,6 @@ public interface StatsRepository extends JpaRepository<Hit, Integer> {
             "ORDER BY COUNT(h.ip) DESC")
     List<GetHitDto> findByTimestampAndUris(LocalDateTime from, LocalDateTime to, List<String> uri);
 
+    List<GetHitDto> findAllByIp(String ip);
+
 }
