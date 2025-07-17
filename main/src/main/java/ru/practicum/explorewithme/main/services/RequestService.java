@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.explorewithme.main.dtos.PatchStatusRequestDto;
 import ru.practicum.explorewithme.main.dtos.RequestDto;
+import ru.practicum.explorewithme.main.dtos.RequestsResultsDto;
 import ru.practicum.explorewithme.main.exceptions.BadRequestException;
 import ru.practicum.explorewithme.main.exceptions.ExistsException;
 import ru.practicum.explorewithme.main.exceptions.NotFoundException;
@@ -17,7 +18,6 @@ import ru.practicum.explorewithme.main.repositories.UserRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @Slf4j
@@ -114,7 +114,8 @@ public class RequestService {
     }
 
     @Transactional
-    public Map<String, List<RequestDto>> patchStatus(Long userId, Long eventId, PatchStatusRequestDto patchDto) {
+    public RequestsResultsDto patchStatus(Long userId, Long eventId, PatchStatusRequestDto patchDto) {
+        RequestsResultsDto requestsResultsDto = new RequestsResultsDto();
         if (!userRepository.existsById(userId.intValue())) {
             throw new NotFoundException("User with id=" + userId + " not found");
         }
@@ -127,7 +128,7 @@ public class RequestService {
         }
 
         if (!event.getRequestModeration() || event.getParticipantLimit() == 0) {
-            return Map.of("confirmedRequest", List.of(), "rejectedRequest", List.of());
+            return requestsResultsDto;
         }
 
         if (event.getParticipantLimit() <= event.getConfirmedRequests()) {
@@ -164,7 +165,9 @@ public class RequestService {
                 rejectedRequests.add(RequestMapper.toDto(request));
             }
         }
+        requestsResultsDto.setRejectedRequests(rejectedRequests);
+        requestsResultsDto.setConfirmedRequests(confirmedRequests);
 
-        return Map.of("confirmedRequest", confirmedRequests, "rejectedRequest", rejectedRequests);
+        return requestsResultsDto;
     }
 }

@@ -35,16 +35,13 @@ public class CompilationService {
             log.error("Title is blank");
             throw new BadRequestException("Title is blank");
         }
+        if (addCompilationDto.getEvents() == null) {
+            addCompilationDto.setEvents(new ArrayList<>());
+        }
         Compilation compilation = new Compilation();
         compilation.setTitle(addCompilationDto.getTitle());
         compilation.setPinned(addCompilationDto.getPinned());
-        List<Event> events = new ArrayList<>();
-        for (Long id : addCompilationDto.getEvents()) {
-            events.add(eventRepository.findById(id).orElseThrow(
-                    () -> new NotFoundException("No event found with id: " + id)
-            ));
-        }
-        compilation.setEvents(events);
+        compilation.setEvents(eventRepository.findAllById(addCompilationDto.getEvents()));
         return CompilationMapper.mapToCompilationDto(compilationRepository.save(compilation));
     }
 
@@ -70,11 +67,11 @@ public class CompilationService {
             compilation.setPinned(updateCompilationDto.getPinned());
         }
 
-        if (updateCompilationDto.getEventsIds() != null) {
-            if (updateCompilationDto.getEventsIds().isEmpty()) {
+        if (updateCompilationDto.getEvents() != null) {
+            if (updateCompilationDto.getEvents().isEmpty()) {
                 compilation.setEvents(new ArrayList<>());
             } else {
-                List<Event> events = eventRepository.findAllById(updateCompilationDto.getEventsIds());
+                List<Event> events = eventRepository.findAllById(updateCompilationDto.getEvents());
                 compilation.setEvents(events);
             }
         }

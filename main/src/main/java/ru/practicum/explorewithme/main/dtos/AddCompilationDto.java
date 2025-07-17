@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -17,8 +16,9 @@ import java.util.List;
 @Builder
 public class AddCompilationDto {
 
-    private List<Long> events = new ArrayList<>();
+    private List<Long> events;
 
+    @NotNull
     private Boolean pinned = Boolean.FALSE;
 
     @NotBlank

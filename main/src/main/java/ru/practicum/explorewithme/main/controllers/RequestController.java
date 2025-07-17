@@ -6,10 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explorewithme.main.dtos.PatchStatusRequestDto;
 import ru.practicum.explorewithme.main.dtos.RequestDto;
+import ru.practicum.explorewithme.main.dtos.RequestsResultsDto;
 import ru.practicum.explorewithme.main.services.RequestService;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @Slf4j
@@ -46,9 +46,9 @@ public class RequestController {
     }
 
     @PatchMapping("/users/{userId}/events/{eventId}/requests")
-    public Map<String, List<RequestDto>> patchStatus(@PathVariable Long userId,
-                                                     @PathVariable Long eventId,
-                                                     @RequestBody @Valid PatchStatusRequestDto patchStatusRequestDto) {
+    public RequestsResultsDto patchStatus(@PathVariable Long userId,
+                                          @PathVariable Long eventId,
+                                          @RequestBody @Valid PatchStatusRequestDto patchStatusRequestDto) {
         System.out.println(patchStatusRequestDto);
         return requestService.patchStatus(userId, eventId, patchStatusRequestDto);
     }
