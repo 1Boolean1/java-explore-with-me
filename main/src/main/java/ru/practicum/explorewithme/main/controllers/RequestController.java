@@ -49,6 +49,7 @@ public class RequestController {
     public Map<String, List<RequestDto>> patchStatus(@PathVariable Long userId,
                                                      @PathVariable Long eventId,
                                                      @RequestBody @Valid PatchStatusRequestDto patchStatusRequestDto) {
+        System.out.println(patchStatusRequestDto);
         return requestService.patchStatus(userId, eventId, patchStatusRequestDto);
     }
 }

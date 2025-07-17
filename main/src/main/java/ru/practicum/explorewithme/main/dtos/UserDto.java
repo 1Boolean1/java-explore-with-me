@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 @Data
 @AllArgsConstructor
@@ -17,7 +18,7 @@ public class UserDto {
     private String name;
 
     @NotBlank
-    @Pattern(regexp = "^[^@]{1,64}@[^@]{1,63}$")
-    @Size(min = 6, max = 254)
+    @Email
+    @Length(min = 6, max = 254)
     private String email;
 }

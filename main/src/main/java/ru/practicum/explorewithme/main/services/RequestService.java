@@ -9,10 +9,7 @@ import ru.practicum.explorewithme.main.exceptions.BadRequestException;
 import ru.practicum.explorewithme.main.exceptions.ExistsException;
 import ru.practicum.explorewithme.main.exceptions.NotFoundException;
 import ru.practicum.explorewithme.main.mappers.RequestMapper;
-import ru.practicum.explorewithme.main.models.Event;
-import ru.practicum.explorewithme.main.models.Request;
-import ru.practicum.explorewithme.main.models.RequestsStatus;
-import ru.practicum.explorewithme.main.models.State;
+import ru.practicum.explorewithme.main.models.*;
 import ru.practicum.explorewithme.main.repositories.EventRepository;
 import ru.practicum.explorewithme.main.repositories.RequestRepository;
 import ru.practicum.explorewithme.main.repositories.UserRepository;
@@ -37,51 +34,39 @@ public class RequestService {
 
     @Transactional
     public RequestDto addRequest(Long userId, Long eventId) {
-        if (eventRepository.findById(eventId).isEmpty()) {
-            log.error("Event with id {} not found", eventId);
-            throw new NotFoundException("Event not found");
-        }
-
-        if (userRepository.findById(userId.intValue()).isEmpty()) {
-            log.error("User with id {} not found", userId);
-            throw new NotFoundException("User not found");
-        }
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " not found"));
+        User user = userRepository.findById(userId.intValue())
+                .orElseThrow(() -> new NotFoundException("User with id=" + userId + " not found"));
 
         if (requestRepository.existsByRequesterIdAndEventId(userId, eventId)) {
-            log.error("Request {} already exists", userId);
-            throw new ExistsException("Request " + userId + " already exists");
+            throw new ExistsException("You have already submitted a request for this event.");
+        }
+        if (event.getInitiator().getId().equals(userId)) {
+            throw new ExistsException("The initiator cannot submit a request for their own event.");
+        }
+        if (!event.getState().equals(State.PUBLISHED)) {
+            throw new ExistsException("Cannot submit a request for an unpublished event.");
         }
 
-        if (eventRepository.findById(eventId).get().getInitiator().getId().equals(userId)) {
-            log.error("Initiator can't add request");
-            throw new ExistsException("Initiator can't add request");
-        }
-
-        if (eventRepository.findById(eventId).get().getParticipantLimit() == requestRepository.countByEventId(eventId) && eventRepository.findById(eventId).get().getParticipantLimit() != 0) {
-            log.error("Participant limit can't add request");
-            throw new ExistsException("Participant limit can't add request");
-        }
-
-        if (!eventRepository.findById(eventId).get().getState().equals(State.PUBLISHED)) {
-            log.error("State can't add request");
-            throw new ExistsException("State can't add request");
-        }
-
-        if (requestRepository.findAllByRequesterId(userId).stream().anyMatch(s -> s.getEvent().getId().equals(eventId))) {
-            log.error("Event with id {} already exists", eventId);
-            throw new ExistsException("Event with id " + eventId + " already exists");
+        if (event.getParticipantLimit() > 0 && event.getConfirmedRequests() >= event.getParticipantLimit()) {
+            throw new ExistsException("The participant limit for the event has been reached.");
         }
 
         Request newRequest = new Request();
-        newRequest.setRequester(userRepository.findById(userId.intValue()).get());
+        newRequest.setRequester(user);
         newRequest.setCreated(LocalDateTime.now());
-        newRequest.setEvent(eventRepository.findById(eventId).get());
-        if (eventRepository.findById(eventId).get().getParticipantLimit() == 0) {
+        newRequest.setEvent(event);
+
+        if (!event.getRequestModeration() || event.getParticipantLimit() == 0) {
             newRequest.setStatus(RequestsStatus.CONFIRMED);
+            event.setConfirmedRequests(event.getConfirmedRequests() + 1);
         } else {
             newRequest.setStatus(RequestsStatus.PENDING);
         }
-        return RequestMapper.toDto(requestRepository.save(newRequest));
+
+        Request savedRequest = requestRepository.save(newRequest);
+        return RequestMapper.toDto(savedRequest);
     }
 
     @Transactional

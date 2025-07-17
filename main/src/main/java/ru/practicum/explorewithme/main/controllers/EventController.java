@@ -94,7 +94,7 @@ public class EventController {
     }
 
     @GetMapping("/events")
-    public List<EventDto> getOpenEvents(@RequestParam(required = false, defaultValue = "") String text,
+    public List<EventDto> getOpenEvents(@RequestParam(required = false) String text,
                                         @RequestParam(required = false) List<Long> categories,
                                         @RequestParam(required = false) Boolean paid,
                                         @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
@@ -110,6 +110,9 @@ public class EventController {
         hit.setUri(request.getRequestURI());
         hit.setTime(LocalDateTime.now());
         statsClient.saveHit(hit);
+        System.out.println("FROM " + from);
+        System.out.println("SIZE " + size);
+        System.out.println("CATEGORIES " + categories);
         log.info("Get events");
         return eventService.getOpenEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size, request.getRequestURI());
     }

@@ -198,6 +198,12 @@ public class EventService {
             log.error("rangeEnd is before rangeStart");
             throw new BadRequestException("rangeEnd is before rangeStart");
         }
+        if (categories != null && categories.isEmpty()) {
+            categories = null;
+        }
+        if (text == null) {
+            text = "";
+        }
 
         int page = from / size;
         PageRequest pageRequest = PageRequest.of(page, size);
