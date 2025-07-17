@@ -134,6 +134,7 @@ public class RequestService {
             throw new ExistsException("The participant limit for the event has been reached.");
         }
 
+
         List<Request> requestsToUpdate = requestRepository.findAllById(patchDto.getRequestIds().stream().map(Long::intValue).toList());
 
         List<RequestDto> confirmedRequests = new ArrayList<>();

@@ -16,7 +16,7 @@ public class UpdateCompilationDto {
 
     private List<Long> eventsIds;
 
-    private Boolean pinned = Boolean.FALSE;
+    private Boolean pinned;
 
     @Length(min = 1, max = 50)
     private String title;

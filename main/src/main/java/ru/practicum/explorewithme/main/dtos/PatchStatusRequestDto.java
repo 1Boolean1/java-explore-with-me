@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.explorewithme.main.models.RequestsStatus;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -14,6 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class PatchStatusRequestDto {
-    List<Long> requestIds = new ArrayList<>();
+    List<Long> requestIds;
     RequestsStatus status;
 }
