@@ -102,11 +102,10 @@ public class CompilationService {
     }
 
     public CompilationDto getCompilation(Long id) {
-        if (compilationRepository.findById(id.intValue()).isPresent()) {
-            log.error("Compilation not found");
-            throw new NotFoundException("Compilation not found");
-        }
-        return CompilationMapper.mapToCompilationDto(compilationRepository.findById(id.intValue()).get());
+        Compilation compilation = compilationRepository.findById(id.intValue()).orElseThrow(
+                () -> new NotFoundException("Compilation with id=" + id + " not found")
+        );
+        return CompilationMapper.mapToCompilationDto(compilation);
     }
 
 }

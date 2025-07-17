@@ -110,9 +110,6 @@ public class EventController {
         hit.setUri(request.getRequestURI());
         hit.setTime(LocalDateTime.now());
         statsClient.saveHit(hit);
-        System.out.println("FROM " + from);
-        System.out.println("SIZE " + size);
-        System.out.println("CATEGORIES " + categories);
         log.info("Get events");
         return eventService.getOpenEvents(text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size, request.getRequestURI());
     }
