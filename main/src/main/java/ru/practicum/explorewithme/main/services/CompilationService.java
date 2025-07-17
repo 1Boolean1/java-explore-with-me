@@ -1,5 +1,6 @@
 package ru.practicum.explorewithme.main.services;
 
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ public class CompilationService {
         this.eventRepository = eventRepository;
     }
 
+    @Transactional
     public CompilationDto addCompilation(final AddCompilationDto addCompilationDto) {
         if (addCompilationDto.getTitle().isBlank()) {
             log.error("Title is blank");
@@ -46,6 +48,7 @@ public class CompilationService {
         return CompilationMapper.mapToCompilationDto(compilationRepository.save(compilation));
     }
 
+    @Transactional
     public void deleteCompilation(final Long id) {
         if (!compilationRepository.existsById(id.intValue())) {
             log.error("Compilation not found");
@@ -55,44 +58,30 @@ public class CompilationService {
         compilationRepository.deleteById(id.intValue());
     }
 
-    public CompilationDto updateCompilation(Long compilationId,
-                                            UpdateCompilationDto updateCompilationDto) {
-        Compilation existingCompilation = compilationRepository.findById(compilationId.intValue())
-                .orElseThrow(() -> new NotFoundException("Compilation not found"));
+    @Transactional
+    public CompilationDto updateCompilation(Long compilationId, UpdateCompilationDto updateCompilationDto) {
+        Compilation compilation = compilationRepository.findById(compilationId.intValue())
+                .orElseThrow(() -> new NotFoundException("Compilation with id=" + compilationId + " not found"));
 
-        boolean needsUpdate = false;
-
-        if (updateCompilationDto.getTitle() != null && !updateCompilationDto.getTitle().isBlank()) {
-            if (!existingCompilation.getTitle().equals(updateCompilationDto.getTitle())) {
-                log.info("Updating existing title");
-                existingCompilation.setTitle(updateCompilationDto.getTitle());
-                needsUpdate = true;
-            }
+        if (updateCompilationDto.getTitle() != null) {
+            compilation.setTitle(updateCompilationDto.getTitle());
         }
         if (updateCompilationDto.getPinned() != null) {
-            if (!existingCompilation.getPinned().equals(updateCompilationDto.getPinned())) {
-                log.info("Updating existing pinned");
-                existingCompilation.setPinned(updateCompilationDto.getPinned());
-            }
-            needsUpdate = true;
+            compilation.setPinned(updateCompilationDto.getPinned());
         }
+
         if (updateCompilationDto.getEventsIds() != null) {
-            if (!updateCompilationDto.getEventsIds().isEmpty()) {
-                List<Long> eventsIds = existingCompilation.getEvents().stream().map(Event::getId).toList();
-                if (!eventsIds.equals(updateCompilationDto.getEventsIds())) {
-                    log.info("Updating existing events");
-                    List<Event> events = eventRepository.findAllById(updateCompilationDto.getEventsIds());
-                    existingCompilation.setEvents(events);
-                }
+            if (updateCompilationDto.getEventsIds().isEmpty()) {
+                compilation.setEvents(new ArrayList<>());
+            } else {
+                List<Event> events = eventRepository.findAllById(updateCompilationDto.getEventsIds());
+                compilation.setEvents(events);
             }
         }
 
-        if (needsUpdate) {
-            Compilation updatedCompilation = compilationRepository.save(existingCompilation);
-            return CompilationMapper.mapToCompilationDto(updatedCompilation);
-        } else {
-            return CompilationMapper.mapToCompilationDto(existingCompilation);
-        }
+        Compilation updatedCompilation = compilationRepository.save(compilation);
+
+        return CompilationMapper.mapToCompilationDto(updatedCompilation);
     }
 
     public List<CompilationDto> getCompilations(boolean pinned, Integer from, Integer size) {

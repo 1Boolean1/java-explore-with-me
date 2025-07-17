@@ -18,6 +18,6 @@ public class UpdateCompilationDto {
 
     private Boolean pinned = Boolean.FALSE;
 
-    @Length(max = 50)
+    @Length(min = 1, max = 50)
     private String title;
 }

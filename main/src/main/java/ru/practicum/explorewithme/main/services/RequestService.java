@@ -145,7 +145,7 @@ public class RequestService {
                 throw new ExistsException("Request ID " + request.getId() + " is not in PENDING state.");
             }
 
-            if (patchDto.getStatus().equals(RequestsStatus.CONFIRMED.name())) {
+            if (patchDto.getStatus().equals(RequestsStatus.CONFIRMED)) {
                 if (event.getConfirmedRequests() < event.getParticipantLimit()) {
                     request.setStatus(RequestsStatus.CONFIRMED);
                     event.setConfirmedRequests(event.getConfirmedRequests() + 1);
@@ -157,7 +157,7 @@ public class RequestService {
                     requestRepository.save(request);
                     rejectedRequests.add(RequestMapper.toDto(request));
                 }
-            } else if (patchDto.getStatus().equals(RequestsStatus.REJECTED.name())) {
+            } else if (patchDto.getStatus().equals(RequestsStatus.REJECTED)) {
                 request.setStatus(RequestsStatus.REJECTED);
                 requestRepository.save(request);
                 rejectedRequests.add(RequestMapper.toDto(request));
