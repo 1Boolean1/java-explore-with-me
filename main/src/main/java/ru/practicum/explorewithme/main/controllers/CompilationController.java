@@ -1,8 +1,10 @@
 package ru.practicum.explorewithme.main.controllers;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explorewithme.main.dtos.AddCompilationDto;
 import ru.practicum.explorewithme.main.dtos.CompilationDto;
@@ -13,6 +15,7 @@ import java.util.List;
 
 @RestController
 @Slf4j
+@Validated
 public class CompilationController {
     private final CompilationService compilationService;
 
@@ -29,13 +32,13 @@ public class CompilationController {
 
     @DeleteMapping("/admin/compilations/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCompilation(@PathVariable final Long id) {
+    public void deleteCompilation(@PathVariable @Positive final Long id) {
         log.info("Delete compilation: {}", id);
         compilationService.deleteCompilation(id);
     }
 
     @PatchMapping("/admin/compilations/{id}")
-    public CompilationDto patchCompilation(@PathVariable final Long id,
+    public CompilationDto patchCompilation(@PathVariable @Positive final Long id,
                                            @RequestBody @Valid final UpdateCompilationDto updateCompilationDto) {
         log.info("update compilation: {}", id);
         return compilationService.updateCompilation(id, updateCompilationDto);
@@ -51,7 +54,7 @@ public class CompilationController {
     }
 
     @GetMapping("/compilations/{id}")
-    public CompilationDto getCompilation(@PathVariable final Long id) {
+    public CompilationDto getCompilation(@PathVariable @Positive final Long id) {
         log.info("get compilation: {}", id);
         return compilationService.getCompilation(id);
     }

@@ -1,8 +1,10 @@
 package ru.practicum.explorewithme.main.controllers;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explorewithme.main.dtos.UserCreateDto;
 import ru.practicum.explorewithme.main.dtos.UserDto;
@@ -12,6 +14,7 @@ import java.util.List;
 
 @RestController
 @Slf4j
+@Validated
 @RequestMapping("/admin/users")
 public class UserController {
     private final UserService userService;
@@ -35,7 +38,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@PathVariable Long id) {
+    public void deleteUser(@PathVariable @Positive Long id) {
         userService.deleteUser(id);
     }
 }

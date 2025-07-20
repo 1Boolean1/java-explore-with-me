@@ -1,8 +1,10 @@
 package ru.practicum.explorewithme.main.controllers;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explorewithme.main.dtos.CategoryCreateDto;
 import ru.practicum.explorewithme.main.dtos.CategoryDto;
@@ -12,6 +14,7 @@ import java.util.List;
 
 @RestController
 @Slf4j
+@Validated
 public class CategoryController {
     private final CategoryService categoryService;
 
@@ -27,14 +30,14 @@ public class CategoryController {
     }
 
     @PatchMapping("/admin/categories/{categoryId}")
-    public CategoryDto updateCategory(@PathVariable Long categoryId, @RequestBody @Valid final CategoryDto categoryDto) {
+    public CategoryDto updateCategory(@PathVariable @Positive Long categoryId, @RequestBody @Valid final CategoryDto categoryDto) {
         log.info("Update category: {}", categoryDto);
         return categoryService.patchCategory(categoryId, categoryDto);
     }
 
     @DeleteMapping("/admin/categories/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCategory(@PathVariable final Long id) {
+    public void deleteCategory(@PathVariable @Positive final Long id) {
         log.info("Delete category: {}", id);
         categoryService.deleteCategory(id);
     }
@@ -47,7 +50,7 @@ public class CategoryController {
     }
 
     @GetMapping("/categories/{id}")
-    public CategoryDto getCategory(@PathVariable final Long id) {
+    public CategoryDto getCategory(@PathVariable @Positive final Long id) {
         log.info("Get category: {}", id);
         return categoryService.getCategoryById(id);
     }

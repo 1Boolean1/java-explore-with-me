@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class UserShortDto {
     @Min(1)
     private Long id;
+
     @NotBlank
     private String name;
 }

@@ -13,7 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class UpdateCompilationDto {
-
     private List<Long> events;
 
     private Boolean pinned;

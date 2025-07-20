@@ -1,9 +1,11 @@
 package ru.practicum.explorewithme.main.mappers;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.explorewithme.main.dtos.UserDto;
 import ru.practicum.explorewithme.main.dtos.UserShortDto;
 import ru.practicum.explorewithme.main.models.User;
 
+@UtilityClass
 public class UserMapper {
     public static UserDto toUserDto(User user) {
         return new UserDto(

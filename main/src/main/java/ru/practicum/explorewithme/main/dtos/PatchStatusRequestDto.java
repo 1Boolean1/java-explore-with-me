@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class PatchStatusRequestDto {
-    List<Long> requestIds;
-    RequestsStatus status;
+    private List<Long> requestIds;
+
+    private RequestsStatus status;
 }

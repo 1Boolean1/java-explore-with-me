@@ -15,14 +15,12 @@ import java.time.LocalDateTime;
 @Builder
 public class EventCreateDto {
     @NotBlank
-    @NotNull
     @Length(min = 20, max = 2000)
     private String annotation;
 
     private Long category;
 
     @NotBlank
-    @NotNull
     @Length(min = 20, max = 7000)
     private String description;
 
@@ -39,7 +37,6 @@ public class EventCreateDto {
     private Boolean requestModeration = true;
 
     @NotBlank
-    @NotNull
     @Length(min = 3, max = 120)
     private String title;
 }

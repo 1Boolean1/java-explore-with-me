@@ -2,9 +2,11 @@ package ru.practicum.explorewithme.main.controllers;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explorewithme.dto.dtos.HitDto;
 import ru.practicum.explorewithme.gateway.client.StatsClient;
@@ -18,6 +20,7 @@ import java.util.List;
 
 @RestController
 @Slf4j
+@Validated
 public class EventController {
     private final EventService eventService;
     private final StatsClient statsClient;
@@ -29,16 +32,16 @@ public class EventController {
 
 
     @GetMapping("/users/{userId}/events")
-    public List<EventDto> getUserEvents(@PathVariable final Long userId,
-                                        @RequestParam(required = false, defaultValue = "0") Integer from,
-                                        @RequestParam(required = false, defaultValue = "10") Integer size) {
+    public List<EventDto> getUserEvents(@PathVariable @Positive final Long userId,
+                                        @RequestParam(defaultValue = "0") Integer from,
+                                        @RequestParam(defaultValue = "10") Integer size) {
         log.info("getUserEvents userId = {}", userId);
         return eventService.getEventsByUserId(userId, from, size);
     }
 
     @PostMapping("/users/{userId}/events")
     @ResponseStatus(HttpStatus.CREATED)
-    public EventDto createUserEvent(@PathVariable final Long userId,
+    public EventDto createUserEvent(@PathVariable @Positive final Long userId,
                                     @RequestBody @Valid final EventCreateDto eventDto,
                                     HttpServletRequest request) {
         HitDto hitDto = new HitDto();
@@ -52,8 +55,8 @@ public class EventController {
     }
 
     @GetMapping("/users/{userId}/events/{eventId}")
-    public EventDto getUserEvent(@PathVariable final Long userId,
-                                 @PathVariable final Long eventId,
+    public EventDto getUserEvent(@PathVariable @Positive final Long userId,
+                                 @PathVariable @Positive final Long eventId,
                                  HttpServletRequest request) {
         HitDto hitDto = new HitDto();
         hitDto.setApp("explorewithme");
@@ -66,8 +69,8 @@ public class EventController {
     }
 
     @PatchMapping("/users/{userId}/events/{eventId}")
-    public EventDto updateEvent(@PathVariable final Long userId,
-                                @PathVariable final Long eventId,
+    public EventDto updateEvent(@PathVariable @Positive final Long userId,
+                                @PathVariable @Positive final Long eventId,
                                 @RequestBody @Valid UpdateEventDto updateEventDto,
                                 HttpServletRequest request) {
         HitDto hitDto = new HitDto();
@@ -81,7 +84,7 @@ public class EventController {
     }
 
     @GetMapping("/events/{id}")
-    public EventDto getEvent(@PathVariable final Long id,
+    public EventDto getEvent(@PathVariable @Positive final Long id,
                              HttpServletRequest request) {
         HitDto hitDto = new HitDto();
         hitDto.setApp("explorewithme");
@@ -99,8 +102,8 @@ public class EventController {
                                         @RequestParam(required = false) Boolean paid,
                                         @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
                                         @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
-                                        @RequestParam(required = false, defaultValue = "false") Boolean onlyAvailable,
-                                        @RequestParam(required = false, defaultValue = "EVENT_DATE") String sort,
+                                        @RequestParam(defaultValue = "false") Boolean onlyAvailable,
+                                        @RequestParam(defaultValue = "EVENT_DATE") String sort,
                                         @RequestParam(name = "from", defaultValue = "0") Integer from,
                                         @RequestParam(name = "size", defaultValue = "10") Integer size,
                                         HttpServletRequest request) {
@@ -127,7 +130,7 @@ public class EventController {
     }
 
     @PatchMapping("/admin/events/{eventId}")
-    public EventDto updateEventByAdmin(@PathVariable final Long eventId,
+    public EventDto updateEventByAdmin(@PathVariable @Positive final Long eventId,
                                        @RequestBody @Valid UpdateEventDto updateEventDto,
                                        HttpServletRequest request) {
         HitDto hitDto = new HitDto();

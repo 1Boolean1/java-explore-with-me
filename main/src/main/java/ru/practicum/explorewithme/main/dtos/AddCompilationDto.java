@@ -22,7 +22,6 @@ public class AddCompilationDto {
     private Boolean pinned = Boolean.FALSE;
 
     @NotBlank
-    @NotNull
     @Length(min = 1, max = 50)
     private String title;
 }

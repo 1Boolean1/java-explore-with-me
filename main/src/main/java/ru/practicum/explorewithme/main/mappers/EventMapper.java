@@ -1,9 +1,11 @@
 package ru.practicum.explorewithme.main.mappers;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.explorewithme.main.dtos.EventDto;
 import ru.practicum.explorewithme.main.dtos.EventShortDto;
 import ru.practicum.explorewithme.main.models.Event;
 
+@UtilityClass
 public class EventMapper {
     public static EventDto toDto(Event event) {
         return new EventDto(

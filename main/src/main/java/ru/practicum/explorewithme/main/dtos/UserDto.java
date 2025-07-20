@@ -14,6 +14,7 @@ import org.hibernate.validator.constraints.Length;
 public class UserDto {
     @Min(1)
     private Long id;
+
     @NotBlank
     private String name;
 
