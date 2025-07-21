@@ -6,6 +6,6 @@ import ru.practicum.explorewithme.main.models.Compilation;
 
 import java.util.List;
 
-public interface CompilationRepository extends JpaRepository<Compilation, Integer> {
+public interface CompilationRepository extends JpaRepository<Compilation, Long> {
     List<Compilation> findByPinned(boolean pinned, Pageable pageable);
 }

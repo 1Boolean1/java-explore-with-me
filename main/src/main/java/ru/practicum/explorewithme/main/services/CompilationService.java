@@ -47,17 +47,17 @@ public class CompilationService {
 
     @Transactional
     public void deleteCompilation(final Long id) {
-        if (!compilationRepository.existsById(id.intValue())) {
+        if (!compilationRepository.existsById(id)) {
             log.error("Compilation not found");
             throw new NotFoundException("Compilation not found");
         }
 
-        compilationRepository.deleteById(id.intValue());
+        compilationRepository.deleteById(id);
     }
 
     @Transactional
     public CompilationDto updateCompilation(Long compilationId, UpdateCompilationDto updateCompilationDto) {
-        Compilation compilation = compilationRepository.findById(compilationId.intValue())
+        Compilation compilation = compilationRepository.findById(compilationId)
                 .orElseThrow(() -> new NotFoundException("Compilation with id=" + compilationId + " not found"));
 
         if (updateCompilationDto.getTitle() != null) {
@@ -88,7 +88,7 @@ public class CompilationService {
     }
 
     public CompilationDto getCompilation(Long id) {
-        Compilation compilation = compilationRepository.findById(id.intValue()).orElseThrow(
+        Compilation compilation = compilationRepository.findById(id).orElseThrow(
                 () -> new NotFoundException("Compilation with id=" + id + " not found")
         );
         return CompilationMapper.mapToCompilationDto(compilation);

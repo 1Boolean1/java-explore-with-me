@@ -36,7 +36,7 @@ public class RequestService {
     public RequestDto addRequest(Long userId, Long eventId) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new NotFoundException("Event with id=" + eventId + " not found"));
-        User user = userRepository.findById(userId.intValue())
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id=" + userId + " not found"));
 
         if (requestRepository.existsByRequesterIdAndEventId(userId, eventId)) {
@@ -71,22 +71,22 @@ public class RequestService {
 
     @Transactional
     public RequestDto cancelRequest(Long userId, Long requestId) {
-        if (requestRepository.findById(requestId.intValue()).isEmpty()) {
+        if (requestRepository.findById(requestId).isEmpty()) {
             log.error("Request with id {} not found", requestId);
             throw new NotFoundException("Request not found");
         }
 
-        if (userRepository.findById(userId.intValue()).isEmpty()) {
+        if (userRepository.findById(userId).isEmpty()) {
             log.error("User with id {} not found", userId);
             throw new NotFoundException("User not found");
         }
-        Request oldRequest = requestRepository.findById(requestId.intValue()).get();
+        Request oldRequest = requestRepository.findById(requestId).get();
         Request request = new Request(oldRequest.getId(), oldRequest.getCreated(), oldRequest.getRequester(), oldRequest.getEvent(), RequestsStatus.CANCELED);
         return RequestMapper.toDto(requestRepository.save(request));
     }
 
     public List<RequestDto> getRequests(Long userId) {
-        if (userRepository.findById(userId.intValue()).isEmpty()) {
+        if (userRepository.findById(userId).isEmpty()) {
             log.error("User with id {} not found", userId);
             throw new NotFoundException("User not found");
         }
@@ -95,7 +95,7 @@ public class RequestService {
     }
 
     public List<RequestDto> getUserRequests(Long userId, Long eventId) {
-        if (userRepository.findById(userId.intValue()).isEmpty()) {
+        if (userRepository.findById(userId).isEmpty()) {
             log.error("User with id {} not found", userId);
             throw new NotFoundException("User not found");
         }
@@ -116,7 +116,7 @@ public class RequestService {
     @Transactional
     public RequestsResultsDto patchStatus(Long userId, Long eventId, PatchStatusRequestDto patchDto) {
         RequestsResultsDto requestsResultsDto = new RequestsResultsDto();
-        if (!userRepository.existsById(userId.intValue())) {
+        if (!userRepository.existsById(userId)) {
             throw new NotFoundException("User with id=" + userId + " not found");
         }
 
@@ -136,7 +136,7 @@ public class RequestService {
         }
 
 
-        List<Request> requestsToUpdate = requestRepository.findAllById(patchDto.getRequestIds().stream().map(Long::intValue).toList());
+        List<Request> requestsToUpdate = requestRepository.findAllById(patchDto.getRequestIds());
 
         List<RequestDto> confirmedRequests = new ArrayList<>();
         List<RequestDto> rejectedRequests = new ArrayList<>();

@@ -51,7 +51,7 @@ public class EventService {
             throw new BadRequestException("Title is blank");
         }
         if (eventCreateDto.getCategory() != null) {
-            if (categoryRepository.findById(eventCreateDto.getCategory().intValue()).isEmpty()) {
+            if (categoryRepository.findById(eventCreateDto.getCategory()).isEmpty()) {
                 log.error("Category not found");
                 throw new NotFoundException("Category not found");
             }
@@ -79,7 +79,7 @@ public class EventService {
             log.error("Participant limit is negative");
             throw new BadRequestException("Participant limit is negative");
         }
-        if (userRepository.findById(id.intValue()).isEmpty()) {
+        if (userRepository.findById(id).isEmpty()) {
             log.error("User not found");
             throw new NotFoundException("User not found");
         }
@@ -87,7 +87,7 @@ public class EventService {
         newEvent.setAnnotation(eventCreateDto.getAnnotation());
         newEvent.setTitle(eventCreateDto.getTitle());
         if (eventCreateDto.getCategory() != null) {
-            newEvent.setCategory(categoryRepository.findById(eventCreateDto.getCategory().intValue()).get());
+            newEvent.setCategory(categoryRepository.findById(eventCreateDto.getCategory()).get());
         }
         newEvent.setEventDate(eventCreateDto.getEventDate());
         newEvent.setDescription(eventCreateDto.getDescription());
@@ -96,7 +96,7 @@ public class EventService {
         locationRepository.save(eventCreateDto.getLocation());
         newEvent.setLocation(eventCreateDto.getLocation());
         newEvent.setParticipantLimit(eventCreateDto.getParticipantLimit());
-        newEvent.setInitiator(userRepository.findById(id.intValue()).get());
+        newEvent.setInitiator(userRepository.findById(id).get());
         newEvent.setState(State.PENDING);
         newEvent.setConfirmedRequests(0);
         newEvent.setRequestModeration(eventCreateDto.getRequestModeration());
@@ -106,7 +106,7 @@ public class EventService {
     }
 
     public EventDto getByUserIdAndEventId(Long userId, Long eventId) {
-        if (userRepository.findById(userId.intValue()).isEmpty()) {
+        if (userRepository.findById(userId).isEmpty()) {
             log.error("User not found");
             throw new NotFoundException("User not found");
         }
@@ -124,7 +124,7 @@ public class EventService {
     }
 
     public List<EventDto> getEventsByUserId(Long userId, int from, int size) {
-        if (userRepository.findById(userId.intValue()).isEmpty()) {
+        if (userRepository.findById(userId).isEmpty()) {
             log.error("User not found");
             throw new NotFoundException("User not found");
         }
@@ -341,13 +341,13 @@ public class EventService {
         }
 
         if (updateEventDto.getCategory() != null && updateEventDto.getCategory() != 0) {
-            if (categoryRepository.findById(updateEventDto.getCategory().intValue()).isEmpty()) {
+            if (categoryRepository.findById(updateEventDto.getCategory()).isEmpty()) {
                 log.error("Category not found");
                 throw new NotFoundException("Category not found");
             }
-            if (!existingEvent.getCategory().equals(categoryRepository.findById(updateEventDto.getCategory().intValue()).get())) {
+            if (!existingEvent.getCategory().equals(categoryRepository.findById(updateEventDto.getCategory()).get())) {
                 log.info("Category changed to " + updateEventDto.getCategory());
-                existingEvent.setCategory(categoryRepository.findById(updateEventDto.getCategory().intValue()).get());
+                existingEvent.setCategory(categoryRepository.findById(updateEventDto.getCategory()).get());
                 needsUpdate = true;
             }
         }

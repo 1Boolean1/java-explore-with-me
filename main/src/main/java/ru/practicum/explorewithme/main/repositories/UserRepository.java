@@ -8,7 +8,7 @@ import ru.practicum.explorewithme.main.models.User;
 
 import java.util.List;
 
-public interface UserRepository extends JpaRepository<User, Integer> {
+public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT new ru.practicum.explorewithme.main.dtos.UserDto(u.id, u.name, u.email) " +
             "FROM User u " +
             "WHERE u.id IN ?1 " +
