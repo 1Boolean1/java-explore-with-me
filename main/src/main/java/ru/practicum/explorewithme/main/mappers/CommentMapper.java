@@ -12,7 +12,7 @@ public class CommentMapper {
                 comment.getText(),
                 UserMapper.toUserShortDto(comment.getUser()),
                 EventMapper.toEventShortDto((comment.getEvent())),
-                comment.getCreated_on()
+                comment.getCreatedOn()
         );
     }
 }
