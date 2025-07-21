@@ -8,7 +8,7 @@ import ru.practicum.explorewithme.main.models.Category;
 
 import java.util.List;
 
-public interface CategoryRepository extends JpaRepository<Category, Integer> {
+public interface CategoryRepository extends JpaRepository<Category, Long> {
     @Query("SELECT new ru.practicum.explorewithme.main.dtos.CategoryDto(h.id, h.name) " +
             "FROM Category h " +
             "ORDER BY h.id ")

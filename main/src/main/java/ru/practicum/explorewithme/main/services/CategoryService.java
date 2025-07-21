@@ -51,16 +51,16 @@ public class CategoryService {
             log.error("Event with this category already exist");
             throw new ExistsException("Event with this category already exist");
         }
-        if (categoryRepository.findById(categoryId.intValue()).isEmpty()) {
+        if (categoryRepository.findById(categoryId).isEmpty()) {
             log.error("Category with id {} not found", categoryId);
             throw new NotFoundException("Category does not exist");
         }
-        categoryRepository.deleteById(categoryId.intValue());
+        categoryRepository.deleteById(categoryId);
     }
 
     @Transactional
     public CategoryDto patchCategory(Long categoryId, CategoryDto categoryDto) {
-        Category existingCategory = categoryRepository.findById(categoryId.intValue())
+        Category existingCategory = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new NotFoundException("Category does not exist"));
 
         boolean needsUpdate = false;
@@ -94,10 +94,10 @@ public class CategoryService {
     }
 
     public CategoryDto getCategoryById(Long categoryId) {
-        if (categoryRepository.findById(categoryId.intValue()).isEmpty()) {
+        if (categoryRepository.findById(categoryId).isEmpty()) {
             log.error("Category with id {} not found", categoryId);
             throw new NotFoundException("Category does not exist");
         }
-        return CategoryMapper.mapCategoryToCategoryDto(categoryRepository.findById(categoryId.intValue()).get());
+        return CategoryMapper.mapCategoryToCategoryDto(categoryRepository.findById(categoryId).get());
     }
 }

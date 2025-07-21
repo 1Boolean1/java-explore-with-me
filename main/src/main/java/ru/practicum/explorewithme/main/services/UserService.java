@@ -59,10 +59,10 @@ public class UserService {
     }
 
     public void deleteUser(Long userId) {
-        if (!userRepository.existsById(userId.intValue())) {
+        if (!userRepository.existsById(userId)) {
             log.error("User not found");
             throw new NotFoundException("User not found");
         }
-        userRepository.deleteById(userId.intValue());
+        userRepository.deleteById(userId);
     }
 }

@@ -5,7 +5,7 @@ import ru.practicum.explorewithme.main.models.Request;
 
 import java.util.List;
 
-public interface RequestRepository extends JpaRepository<Request, Integer> {
+public interface RequestRepository extends JpaRepository<Request, Long> {
     Boolean existsByRequesterIdAndEventId(Long userId, Long eventId);
 
     int countByEventId(Long eventId);
