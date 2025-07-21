@@ -32,7 +32,7 @@ public class CommentService {
 
     @Transactional
     public CommentDto addComment(Long userId, long eventId, CommentCreateDto commentCreateDto) {
-        if(commentCreateDto.getText().isBlank()){
+        if (commentCreateDto.getText().isBlank()) {
             log.error("Comment text is blank");
             throw new ExistsException("Comment text is blank");
         }
@@ -95,7 +95,7 @@ public class CommentService {
         Comment existsComment = commentRepository.findById(commentId).orElseThrow(
                 () -> new NotFoundException("Comment not found")
         );
-        if(!existsComment.getUser().getId().equals(userId)){
+        if (!existsComment.getUser().getId().equals(userId)) {
             log.error("Comment is not the same");
             throw new ExistsException("Comment is not the same");
         }
