@@ -1,11 +1,3 @@
-Конечно, вот код для файла README.md. Вы можете скопировать его и вставить в свой проект.
-
-code
-Markdown
-download
-content_copy
-expand_less
-
 # Проект "Explore With Me"
 
 ## Описание
